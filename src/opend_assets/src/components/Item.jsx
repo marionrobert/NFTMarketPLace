@@ -25,7 +25,7 @@ function Item(props) {
     const userID = await NFTActor.getOwner();
     const imageData = await NFTActor.getAsset();
 
-    // make data recognised by JS in 2 steps (array of Nat8  & URL object)
+    // make imageData (Nat8) recognised by JS in 2 steps (array of Nat8  & URL object)
     // https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array
     // https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL
     // https://developer.mozilla.org/en-US/docs/Web/API/Blob/Blob
