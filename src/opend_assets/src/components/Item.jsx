@@ -3,12 +3,16 @@ import logo from "../../assets/logo.png";
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { idlFactory } from "../../../declarations/nft";
 import { Principal } from "@dfinity/principal";
+import Button from "./Button";
+import { opend } from "../../../declarations/opend/index";
 
 function Item(props) {
 
   const [name, setName] = useState();
   const [owner, SetOwner] = useState();
   const [image, setImage] = useState();
+  const [button, setButton] = useState();
+  const [priceInput, setPriceInput] = useState();
 
   const id = props.id;
 
@@ -37,12 +41,33 @@ function Item(props) {
     setName(NFTname);
     SetOwner(userID.toText());
     setImage(image);
+    setButton(<Button handleClick={handleSell} text={"Sell"}/>)
   }
 
-  // leave second argment "[]" empty --> the function will be called once, the first time the website is load"
+  // leave second argment "[]" empty --> the function will be called once, the first time the website is load
   useEffect(() => {
     loadNFT();
   }, []);
+
+  let price;
+
+  function handleSell(){
+    // console.log("sell clicked");
+    setPriceInput(<input
+      placeholder="Price in DANG"
+      type="number"
+      className="price-input"
+      value={price}
+      onChange={(e) => price = e.target.value}
+    />);
+    setButton(<Button handleClick={sellItem} text={"Confirm"}/>);
+  };
+
+  async function sellItem(){
+    console.log("set price =" + price);
+    const listingResult = await opend.listItem(props.id, Number(price));
+    console.log("listing:" + listingResult);
+  }
 
   return (
     <div className="disGrid-item">
@@ -58,6 +83,8 @@ function Item(props) {
           <p className="disTypography-root makeStyles-bodyText-24 disTypography-body2 disTypography-colorTextSecondary">
             Owner: {owner}
           </p>
+          {priceInput}
+          {button}
         </div>
       </div>
     </div>
