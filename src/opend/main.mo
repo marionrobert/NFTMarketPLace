@@ -61,8 +61,8 @@ actor OpenD {
         return List.toArray(userNFTs);
     };
 
-    public shared(msg) func listItem(id: Principal, price: Nat) : async Text {
-        var item : NFTActorClass.NFT = switch (mapOfNFTs.get(id)) {
+    public shared(msg) func listItem(nftId: Principal, price: Nat) : async Text {
+        var item : NFTActorClass.NFT = switch (mapOfNFTs.get(nftId)) {
             case null return "NFT does not exist.";
             case (?result) result;
         };
@@ -79,6 +79,10 @@ actor OpenD {
         } else {
             return "You don't own the NFT."
         };
+    };
+
+    public query func getOpenDCanisterID() : async Principal {
+        return Principal.fromActor(OpenD);
     };
   
 };
