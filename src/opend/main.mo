@@ -74,7 +74,7 @@ actor OpenD {
                 itemOwner = owner;
                 itemPrice = price;
             };
-            mapOfListings.put(id, newListing);
+            mapOfListings.put(nftId, newListing);
             return "Success"
         } else {
             return "You don't own the NFT."
