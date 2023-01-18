@@ -10,11 +10,16 @@ import CURRENT_USER_ID from "../index";
 function Header() {
 
   const [userOwnedGallery, setOwnedGallery] = useState();
+  const [listingGallery, setListingGallery] = useState();
 
   async function getNFTs() {
     const userNFTIds = await opend.getOwnedNFTs(CURRENT_USER_ID);
     // console.log(userNFTIds);
     setOwnedGallery(<Gallery title="My NFTS" ids={userNFTIds}/>)
+
+    const listedNFTs = await opend.getListedNFTs();
+    console.log(listedNFTs);
+    setListingGallery(<Gallery title="Discover" ids={listedNFTs}/>);
   };
 
   useEffect(() => {
@@ -51,7 +56,7 @@ function Header() {
           <img className="bottom-space" src={homeImage} />
         </Route>
         <Route exact path="/discover">
-          <h1>Discover</h1>
+          {listingGallery}
         </Route>
         <Route exact path="/minter">
           <Minter/>

@@ -4,6 +4,7 @@ import Debug "mo:base/Debug";
 import Principal "mo:base/Principal";
 import HashMap "mo:base/HashMap";
 import List "mo:base/List";
+import Iter "mo:base/Iter";
 
 actor OpenD {
 
@@ -60,6 +61,11 @@ actor OpenD {
 
         return List.toArray(userNFTs);
     };
+
+    public query func getListedNFTs() : async [Principal]{
+       let ids = Iter.toArray(mapOfListings.keys());
+       return ids;
+    } ;
 
     public shared(msg) func listItem(nftId: Principal, price: Nat) : async Text {
         var item : NFTActorClass.NFT = switch (mapOfNFTs.get(nftId)) {
