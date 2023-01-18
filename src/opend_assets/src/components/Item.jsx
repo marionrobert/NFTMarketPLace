@@ -15,6 +15,7 @@ function Item(props) {
   const [priceInput, setPriceInput] = useState();
   const [loaderHidden, setLoaderHidden] = useState(true);
   const [blur, setBlur] = useState();
+  const [sellStatus, setSellStatus] = useState("");
 
   const id = props.id;
 
@@ -52,11 +53,15 @@ function Item(props) {
     setName(NFTname);
     SetOwner(userID.toText());
     setImage(image);
+    
+    // check if the NFT is in the mapsOfListings (using isListed opend method)
+    // e.d. NFT is in yhe transfers' list
+    // if so, update the owner and blur it
     const nftIsListed = await opend.isListed(props.id);
-
     if (nftIsListed) {
       SetOwner("OpenD");
       setBlur({filter: "blur(4px"});
+      setSellStatus("Listed");
     } else {
       setButton(<Button handleClick={handleSell} text={"Sell"}/>);
     };
@@ -118,7 +123,7 @@ function Item(props) {
         </div>
         <div className="disCardContent-root">
           <h2 className="disTypography-root makeStyles-bodyText-24 disTypography-h5 disTypography-gutterBottom">
-            {name}<span className="purple-text"></span>
+            {name}<span className="purple-text"> {sellStatus}</span>
           </h2>
           <p className="disTypography-root makeStyles-bodyText-24 disTypography-body2 disTypography-colorTextSecondary">
             Owner: {owner}
