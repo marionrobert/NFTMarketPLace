@@ -16,6 +16,8 @@ actor OpenD {
 
     var mapOfNFTs = HashMap.HashMap<Principal, NFTActorClass.NFT>(1, Principal.equal, Principal.hash);
     var mapOfOwners = HashMap.HashMap<Principal, List.List<Principal>>(1, Principal.equal, Principal.hash);
+    // listings = disponiblités à la vente
+    // key = NFTid (principal); value = Listing{itemOwner: Principal, itemPrice:Nat}
     var mapOfListings = HashMap.HashMap<Principal, Listing>(1, Principal.equal, Principal.hash);
 
     public shared(msg) func mint(imgData: [Nat8], name: Text) : async Principal{
@@ -117,5 +119,43 @@ actor OpenD {
 
         return listing.itemPrice;
     };
-  
+
+    public shared(msg) func completePurchase(nftId: Principal, currentOwnerId: Principal, newOwnerId: Principal) : async Text {
+        // pull up/identify the puchased NFT 
+        var purchasedNFT : NFTActorClass.NFT = switch (mapOfNFTs.get(nftId)){
+            case null return "NFT does not exist";
+            case (?result) result
+        };
+
+        // transfert the NFT over to the newOwner
+        // the NFT has a new owner registered
+        let transferResult = await purchasedNFT.transferOwnership(newOwnerId);
+
+
+        if (transferResult == "Success") {
+            // delete the NFT from our maOfListings
+            mapOfListings.delete(nftId);
+
+        // delete the NFT from the previous owner's registered list of owned NFTs
+            // first get the NFTs owned by the previous owner
+            var ownedNFTs : List.List<Principal> = switch (mapOfOwners.get(currentOwnerId)) {
+                case null List.nil<Principal>();
+                case (?result) result
+            };
+            // update the list of owned nfts by the previous owner
+            // by returning a new list without the NFT purchased bcs it doesn't enter the condition listItemId != id
+            ownedNFTs := List.filter(ownedNFTs, func(listItemId: Principal) : Bool {
+                return listItemId != nftId;
+            });
+
+            // update the mapOfOwners with the updated list of NFT's owned by the previous owner
+            //mapOfOwners.put(currentOwnerId, ownedNFTs)
+
+            //add the purchased NFT to the new owner's list of owned NFTs, in the mapOfOwners
+            addToOwnershipMap(newOwnerId, nftId);
+            return "Success"
+        } else {
+            return transferResult;
+        };
+    };
 };

@@ -25,17 +25,21 @@ function Item(props) {
 
   const localHost = "http://localhost:8080/";
   const agent = new HttpAgent({host: localHost});
-  // add this line for error : "Fail to Verify certificate"
+  agent.fetchRootKey();
+  // add this above line for manage the following error : "Fail to Verify certificate"
   // --> "By default, the agent is configured to talk to the main Internet Computer,
   // and verifies responses using a hard-coded public key."
   // https://erxue-5aaaa-aaaab-qaagq-cai.raw.ic0.app/agent/interfaces/Agent.html#rootKey 
   // This following function will instruct the agent to ask the endpoint for its public key,
   // and use that instead. This is required when talking to a local test instance, for example
-  agent.fetchRootKey();
   // --> TODO: when deploying live, remove the line above
+  
+  
+  
   let NFTActor;
-
   async function loadNFT(){
+    // createActor() is an asynchronous method that creates an Actor to interact with the Internet Computer.
+    // Returns an Actor for the provided Canister Id and interface factory (Candid or IDL).
     NFTActor = await Actor.createActor(idlFactory, {
       agent,
       canisterId: id,
@@ -131,8 +135,18 @@ function Item(props) {
       canisterId: Principal.fromText("sp3hj-caaaa-aaaaa-aaajq-cai"),
     });
 
+    // get hold of the seller Principal ID
+    const sellerId = await opend.getOriginalOwner(props.id);
+    // get hold of the price of the NFT which will be sold
+    const itemPrice = await opend.getListedNFTPrice(props.id);
 
-
+    const resultOfTransfer = await tokenActor.transfer(sellerId, itemPrice)
+    console.log(resultOfTransfer);
+    if (resultOfTransfer == "Success") {
+      //transfer the ownership
+      const transferResult = await opend.completePurchase(props.id, sellerId, CURRENT_USER_ID);
+      console.log("purchase: " + transferResult);
+    };
   };
 
   return (
