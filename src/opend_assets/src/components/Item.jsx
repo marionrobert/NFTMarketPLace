@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import logo from "../../assets/logo.png";
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { idlFactory } from "../../../declarations/nft";
-import { idlFactory } from "../../../declarations/token";
+import { idlFactory as tokenIdlFactory } from "../../../declarations/token";
 import { Principal } from "@dfinity/principal";
 import Button from "./Button";
 import { opend } from "../../../declarations/opend/index";
@@ -123,6 +123,15 @@ function Item(props) {
 
   async function handleBuy() {
     console.log("Buy was triggered");
+    //create token actor --> use the create actor to create our token canister
+    // purpose : use this token actor and tap into it in the same way that we have been using the OpenD
+    // example, calling the token canister's methods
+    const tokenActor = await Actor.createActor(tokenIdlFactory, {
+      agent,
+      canisterId: Principal.fromText("sp3hj-caaaa-aaaaa-aaajq-cai"),
+    });
+
+
 
   };
 
