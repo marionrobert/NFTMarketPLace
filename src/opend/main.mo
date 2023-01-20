@@ -133,6 +133,7 @@ actor OpenD {
 
 
         if (transferResult == "Success") {
+
             // delete the NFT from our maOfListings
             mapOfListings.delete(nftId);
 
@@ -154,8 +155,11 @@ actor OpenD {
             //add the purchased NFT to the new owner's list of owned NFTs, in the mapOfOwners
             addToOwnershipMap(newOwnerId, nftId);
             return "Success"
+
         } else {
+
             return transferResult;
+            
         };
     };
 };
